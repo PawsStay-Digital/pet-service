@@ -23,29 +23,32 @@ public class PetController {
     @PostMapping
     public ResponseEntity<PetResponse> createPet(
             @RequestBody @Valid PetRequest pet,
-            @RequestHeader("X-User-Email") String ownerEmail) {
+            @RequestHeader("X-User-Id") String userId) {
 
-        log.info("createPet:receive request form {} ", ownerEmail);
+        log.info("createPet:receive request form {} ", userId);
 
-        PetResponse response = petService.createPet(pet,ownerEmail);
+        PetResponse response = petService.createPet(pet, userId);
         return ResponseEntity.ok(response);
     }
+
     @GetMapping
-    public ResponseEntity<List<PetResponse>> getUserPets(@RequestHeader("X-User-Email") String ownerEmail){
-        log.info("getUserPets:receive request form {} ", ownerEmail);
-        List<PetResponse> response = petService.getUserPets(ownerEmail);
+    public ResponseEntity<List<PetResponse>> getUserPets(@RequestHeader("X-User-Id") String userId) {
+        log.info("getUserPets:receive request form {} ", userId);
+        List<PetResponse> response = petService.getUserPets(userId);
         return ResponseEntity.ok(response);
     }
+
     @GetMapping("{id}")
-    public ResponseEntity<PetResponse> getPetDetail(@PathVariable Long id, @RequestHeader("X-User-Email") String ownerEmail){
-        log.info("getPetDetail:receive request form {} query pet id {}", ownerEmail, id);
-        PetResponse petDetail = petService.getPetDetail(id, ownerEmail);
+    public ResponseEntity<PetResponse> getPetDetail(@PathVariable Long id, @RequestHeader("X-User-Id") String userId) {
+        log.info("getPetDetail:receive request form {} query pet id {}", userId, id);
+        PetResponse petDetail = petService.getPetDetail(id, userId);
         return ResponseEntity.ok(petDetail);
     }
+
     @DeleteMapping("{id}")
-    public ResponseEntity<?> deletePet(@PathVariable Long id, @RequestHeader("X-User-Email") String ownerEmail){
-        log.info("deletePet:receive request form {} query pet id {}", ownerEmail, id);
-        petService.deletePet(id, ownerEmail);
+    public ResponseEntity<?> deletePet(@PathVariable Long id, @RequestHeader("X-User-Id") String userId) {
+        log.info("deletePet:receive request form {} query pet id {}", userId, id);
+        petService.deletePet(id, userId);
         return ResponseEntity.ok().build();
     }
 

@@ -12,36 +12,38 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class PetServiceImpl implements PetService{
+public class PetServiceImpl implements PetService {
     private final PetRepository petRepository;
+
     @Override
-    public PetResponse createPet(PetRequest request, String email) {
-       Pet pet = Pet.builder()
-               .name(request.getName())
-               .breed(request.getBreed())
-               .age(request.getAge())
-               .description(request.getDescription())
-               .ownerEmail(email)
-               .build();
-       Pet savedPet = petRepository.save(pet);
-       log.info("Pet created with Id:{} by user:{}",savedPet.getId(),email);
-       return mapToResponse(pet);
+    public PetResponse createPet(PetRequest request, String userId) {
+        Pet pet = Pet.builder()
+                .name(request.getName())
+                .breed(request.getBreed())
+                .age(request.getAge())
+                .description(request.getDescription())
+                .userId(userId)
+                .build();
+        Pet savedPet = petRepository.save(pet);
+        log.info("Pet created with Id:{} by userId:{}", savedPet.getId(), userId);
+        return mapToResponse(pet);
     }
 
     @Override
-    public List<PetResponse> getUserPets(String email) {
-        return petRepository.findByOwnerEmail(email)
+    public List<PetResponse> getUserPets(String userId) {
+        return petRepository.findByUserId(userId)
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
     }
 
     @Override
-    public PetResponse getPetDetail(Long id, String email) {
-        Pet pet = petRepository.findByIdAndOwnerEmail(id, email)
+    public PetResponse getPetDetail(Long id, String userId) {
+        Pet pet = petRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("can not find specific pet id"));
 
         return mapToResponse(pet);
@@ -49,15 +51,15 @@ public class PetServiceImpl implements PetService{
 
     @Override
     @Transactional
-    public void deletePet(Long id, String email) {
-        if (!petRepository.existsByIdAndOwnerEmail(id, email)) {
+    public void deletePet(Long id, String userId) {
+        if (!petRepository.existsByIdAndUserId(id, userId)) {
             throw new UnauthorizedException("unauthorize request");
         }
         petRepository.deleteById(id);
 
     }
 
-    private PetResponse mapToResponse(Pet pet){
+    private PetResponse mapToResponse(Pet pet) {
         return PetResponse.builder()
                 .id(pet.getId())
                 .name(pet.getName())

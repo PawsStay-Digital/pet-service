@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -25,8 +26,8 @@ public class Pet {
     private Integer age;
     @Column(length = 1000)
     private String description;
-    @Column(name= "owner_email", nullable = false)
-    private String ownerEmail;
+    @Column(name = "owner_id", nullable = false)
+    private String userId;
     @CreationTimestamp
     private LocalDateTime createdAt;
 }
