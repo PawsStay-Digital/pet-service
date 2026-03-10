@@ -1,16 +1,17 @@
 package com.pawsstay.petservice.service;
 
+import com.pawsstay.petservice.dto.PetDetailResponse;
 import com.pawsstay.petservice.dto.PetRequest;
-import com.pawsstay.petservice.dto.PetResponse;
+import com.pawsstay.petservice.dto.PetDTO;
 
 import java.util.List;
 
 public interface PetService {
-    PetResponse createPet(PetRequest request, String userId);
+    PetDTO createPet(PetRequest request, String userId);
 
-    List<PetResponse> getUserPets(String userId);
+    List<PetDTO> getUserPets(String userId);
 
-    PetResponse getPetDetail(Long id, String userId);
+    PetDetailResponse getPetDetail(Long id, String userId);
 
     void deletePet(Long id, String userId);
 }

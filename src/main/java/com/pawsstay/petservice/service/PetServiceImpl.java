@@ -1,7 +1,7 @@
 package com.pawsstay.petservice.service;
 
-import com.pawsstay.petservice.dto.PetRequest;
-import com.pawsstay.petservice.dto.PetResponse;
+import com.pawsstay.petservice.config.UserClient;
+import com.pawsstay.petservice.dto.*;
 import com.pawsstay.petservice.entity.Pet;
 import com.pawsstay.petservice.exception.ResourceNotFoundException;
 import com.pawsstay.petservice.exception.UnauthorizedException;
@@ -18,9 +18,10 @@ import java.util.List;
 @Slf4j
 public class PetServiceImpl implements PetService {
     private final PetRepository petRepository;
+    private final UserClient userClient;
 
     @Override
-    public PetResponse createPet(PetRequest request, String userId) {
+    public PetDTO createPet(PetRequest request, String userId) {
         Pet pet = Pet.builder()
                 .name(request.getName())
                 .breed(request.getBreed())
@@ -34,7 +35,7 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public List<PetResponse> getUserPets(String userId) {
+    public List<PetDTO> getUserPets(String userId) {
         return petRepository.findByUserId(userId)
                 .stream()
                 .map(this::mapToResponse)
@@ -42,11 +43,16 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public PetResponse getPetDetail(Long id, String userId) {
+    public PetDetailResponse getPetDetail(Long id, String userId) {
         Pet pet = petRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("can not find specific pet id"));
 
-        return mapToResponse(pet);
+        PetDTO petDTO = mapToResponse(pet);
+        UserDTO userDTO = userClient.getUserById(userId);
+        OwnerDTO ownerDTO = OwnerDTO.builder().ownerId(userDTO.getUserId())
+                .username(userDTO.getUsername())
+                .email(userDTO.getEmail()).build();
+        return new PetDetailResponse(petDTO,ownerDTO);
     }
 
     @Override
@@ -59,8 +65,8 @@ public class PetServiceImpl implements PetService {
 
     }
 
-    private PetResponse mapToResponse(Pet pet) {
-        return PetResponse.builder()
+    private PetDTO mapToResponse(Pet pet) {
+        return PetDTO.builder()
                 .id(pet.getId())
                 .name(pet.getName())
                 .breed(pet.getBreed())
