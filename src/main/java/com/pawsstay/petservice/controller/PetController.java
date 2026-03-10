@@ -1,7 +1,8 @@
 package com.pawsstay.petservice.controller;
 
+import com.pawsstay.petservice.dto.PetDetailResponse;
 import com.pawsstay.petservice.dto.PetRequest;
-import com.pawsstay.petservice.dto.PetResponse;
+import com.pawsstay.petservice.dto.PetDTO;
 import com.pawsstay.petservice.service.PetService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,27 +22,27 @@ public class PetController {
     private final PetService petService;
 
     @PostMapping
-    public ResponseEntity<PetResponse> createPet(
+    public ResponseEntity<PetDTO> createPet(
             @RequestBody @Valid PetRequest pet,
             @RequestHeader("X-User-Id") String userId) {
 
         log.info("createPet:receive request form {} ", userId);
 
-        PetResponse response = petService.createPet(pet, userId);
+        PetDTO response = petService.createPet(pet, userId);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<PetResponse>> getUserPets(@RequestHeader("X-User-Id") String userId) {
+    public ResponseEntity<List<PetDTO>> getUserPets(@RequestHeader("X-User-Id") String userId) {
         log.info("getUserPets:receive request form {} ", userId);
-        List<PetResponse> response = petService.getUserPets(userId);
+        List<PetDTO> response = petService.getUserPets(userId);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<PetResponse> getPetDetail(@PathVariable Long id, @RequestHeader("X-User-Id") String userId) {
+    public ResponseEntity<PetDetailResponse> getPetDetail(@PathVariable Long id, @RequestHeader("X-User-Id") String userId) {
         log.info("getPetDetail:receive request form {} query pet id {}", userId, id);
-        PetResponse petDetail = petService.getPetDetail(id, userId);
+        PetDetailResponse petDetail = petService.getPetDetail(id, userId);
         return ResponseEntity.ok(petDetail);
     }
 
