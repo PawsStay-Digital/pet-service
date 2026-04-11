@@ -1,4 +1,4 @@
-package com.pawsstay.petservice;
+package com.pawsstay.pet_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
