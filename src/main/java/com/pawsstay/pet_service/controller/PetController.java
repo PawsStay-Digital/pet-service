@@ -33,16 +33,16 @@ public class PetController {
         return ResponseEntity.status(HttpStatus.CREATED).body(pet);
     }
     @GetMapping("owner/{ownerId}")
-    public ResponseEntity<Collection<PetResponse>> findPetsByOwnerId(@PathVariable Long ownerId){
-        return null;
+    public ResponseEntity<Collection<PetResponse>> getPetsByOwner(@PathVariable Long ownerId){
+        return ResponseEntity.ok(petService.findPetsByOwner(ownerId));
     }
     @GetMapping("{id}")
-    public ResponseEntity<Collection<PetResponse>> findPetById(@PathVariable Long id){
-        return null;
+    public ResponseEntity<PetResponse> getPet(@PathVariable Long id){
+        return ResponseEntity.ok(petService.findPetById(id));
     }
     @PutMapping("{id}")
-    public ResponseEntity<Collection<PetResponse>> updatePet(@Valid @RequestBody PetUpdateRequest request, @PathVariable Long id){
-        return null;
+    public ResponseEntity<PetResponse> updatePet(@Valid @RequestBody PetUpdateRequest request, @PathVariable Long id){
+        return ResponseEntity.ok(petService.updatePet(request,id));
     }
 
 

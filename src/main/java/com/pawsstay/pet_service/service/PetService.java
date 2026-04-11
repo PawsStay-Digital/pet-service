@@ -9,7 +9,7 @@ import java.util.Collection;
 
 public interface PetService {
     PetResponse createPet(PetCreateRequest pet, MultipartFile image);
-    PetResponse updatePet(PetUpdateRequest pet);
+    PetResponse updatePet(PetUpdateRequest pet, Long id);
     Collection<PetResponse> findPetsByOwner(Long ownerId);
     PetResponse findPetById(Long id);
 

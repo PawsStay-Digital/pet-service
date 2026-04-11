@@ -4,15 +4,15 @@ import com.pawsstay.pet_service.dto.PetCreateRequest;
 import com.pawsstay.pet_service.dto.PetResponse;
 import com.pawsstay.pet_service.dto.PetUpdateRequest;
 import com.pawsstay.pet_service.entity.Pet;
+import com.pawsstay.pet_service.exception.ResourceNotFoundException;
 import com.pawsstay.pet_service.repository.PetRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.Collection;
-import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -40,18 +40,30 @@ public class PetServiceImpl implements PetService{
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PetResponse updatePet(PetUpdateRequest pet) {
-        return null;
+    public PetResponse updatePet(PetUpdateRequest req, Long id) {
+        Pet pet = petRepository.findPetById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Pet not found with id: " + id));
+        pet.setName(req.getName());
+        pet.setVaccinated(req.isVaccinated());
+        pet.setNeutered(req.isNeutered());
+        pet.setTrained(req.isTrained());
+        pet.setNotes(req.getNotes());
+        Pet petSaved = petRepository.save(pet);
+
+        return convertPetResponse(petSaved);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Collection<PetResponse> findPetsByOwner(Long ownerId) {
-        return List.of();
+        return petRepository.findPetsByOwnerId(ownerId).stream().map(this::convertPetResponse).toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PetResponse findPetById(Long id) {
-        return null;
+        return petRepository.findPetById(id).map(this::convertPetResponse)
+                .orElseThrow(() -> new ResourceNotFoundException("Pet not found with id: " + id));
     }
 
     private Pet convertPet(PetCreateRequest pet, String photoUrl){
